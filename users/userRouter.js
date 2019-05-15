@@ -6,8 +6,9 @@ const Posts = require('../posts/postDb.js');
 const router = express.Router();
 
 
-router.post('/', (req, res) => {
-
+router.post('/', async (req, res) => {
+    const createPost = await Posts.insert(req.body);
+    res.status(201).json(createPost);
 });
 
 router.post('/:id/posts', (req, res) => {
