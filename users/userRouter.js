@@ -1,6 +1,10 @@
-const express = 'express';
+const express = require('express');
+
+const Users = require('../users/userDb.js');
+const Posts = require('../posts/postDb.js');
 
 const router = express.Router();
+
 
 router.post('/', (req, res) => {
 
@@ -30,7 +34,7 @@ router.put('/:id', (req, res) => {
 
 });
 
-//custom middleware
+//Custom middleware
 
 function validateUserId(req, res, next) {
 
