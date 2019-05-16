@@ -1,42 +1,35 @@
 //Imports
 const express = require('express');
 const helmet = require('helmet');
-//  make custom logger
-const morgan = require('morgan');
 
 const postRouter = require('./posts/postRouter.js');
 const userRouter = require('./users/userRouter.js');
 
 const server = express();
 
-//Built-in middleware
-server.use(express.json());
-server.use(morgan('dev'));
-
-//Thrid party middleware
+//Configure global middleware.
+server.use(express.json()); // built-in middleware
 server.use(helmet());
+server.use(logger); //Custom middleware
 
-//Custom middleware
+//Configure route handlers
+server.use('/api/users', userRouter);
+server.use('/api/posts', postRouter);
 
-
-//Router
-server.use('api/users', userRouter);
-server.use('api/posts', postRouter);
-
+//Route(test)
 server.get('/', (req, res) => {
   res.send(`<h2>Let's write some middleware!</h2>`);
 });
 
 //Custom middleware
-
 function logger(req, res, next) {
   console.log(
-    `[${new Date().toISOString()}] ${req.method} to ${req.url} from ${req.get(
+    ` ${req.method} to ${req.url} from ${req.get(
       'Origin'
-    )}`
+    )} [${new Date().toISOString()}]`
   );
 
   next();
-};
+}
 
 module.exports = server;
