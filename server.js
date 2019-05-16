@@ -2,6 +2,7 @@
 const express = require('express');
 const helmet = require('helmet');
 
+//Routes/endpoints
 const postRouter = require('./posts/postRouter.js');
 const userRouter = require('./users/userRouter.js');
 
@@ -16,10 +17,12 @@ server.use(logger); //Custom middleware
 server.use('/api/users', userRouter);
 server.use('/api/posts', postRouter);
 
-//Route(test)
+/*
+Route(test)
 server.get('/', (req, res) => {
   res.send(`<h2>Let's write some middleware!</h2>`);
 });
+*/
 
 //Custom middleware
 function logger(req, res, next) {
