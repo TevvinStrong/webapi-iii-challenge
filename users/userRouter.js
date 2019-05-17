@@ -66,12 +66,33 @@ router.get('/:id/posts', validateUserId, async (req, res) => {
 });
 
 router.delete('/:id', validateUserId, async (req, res) => {
+    const { id } = req.params;
 
+    try {
+        const deleteUser = await Users.get(id);
+        if (deleteUser.length) {
+            res.json(deleteUser);
+        } else {
+            res.status(404).json({ message: "The user with the specified id does not exist." });
+        }
+    } catch (error) {
+        res.status(400), json({ message: "User does not exist." });
+    }
 });
 
 router.put('/:id', validateUserId, async (req, res) => {
-
+    try {
+        const updateUser = await Users.update(req.params.id, req.body);
+        if (updateUser) {
+            res.status(201).json(updateUser);
+        } else {
+            res.status(404).json({ message: "The user with the specified id does not exist." });
+        }
+    } catch (error) {
+        res.status(400), json({ message: "The user information could not be modified." });
+    }
 });
+
 
 //Custom middleware
 async function validateUserId(req, res, next) {
