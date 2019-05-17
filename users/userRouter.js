@@ -51,7 +51,18 @@ router.get('/:id', validateUserId, async (req, res) => {
 });
 
 router.get('/:id/posts', validateUserId, async (req, res) => {
+    const { id } = req.params;
 
+    try {
+        const getUser = await Users.get(id);
+        if (getUser.length) {
+            res.json(getUser);
+        } else {
+            res.status(404).json({ message: "The user with the specified podt does not exist." });
+        }
+    } catch (error) {
+        res.status(400), json({ message: "Post for this user does not exist." });
+    }
 });
 
 router.delete('/:id', validateUserId, async (req, res) => {
