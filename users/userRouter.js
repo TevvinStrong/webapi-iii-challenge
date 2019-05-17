@@ -5,10 +5,16 @@ const Posts = require('../posts/postDb.js');
 
 const router = express.Router();
 
-
+/*
+TODO: Come back and firgure out with post endpoint isn't working.
+*/
 router.post('/', validatePost, async (req, res) => {
-    const createPost = await Posts.insert(req.body);
-    res.status(201).json(createPost);
+    try {
+        const createPost = await Posts.insert(req.body);
+        res.status(201).json(createPost);
+    } catch (error) {
+        res.status(400).json({ message: "failed to create post." });
+    }
 });
 
 router.post('/:id/posts', validateUserId, validateUser, async (req, res) => {
@@ -21,11 +27,27 @@ router.post('/:id/posts', validateUserId, validateUser, async (req, res) => {
 });
 
 router.get('/', async (req, res) => {
-
+    try {
+        const users = await Users.get(req.query);
+        res.status(201).json(users);
+    } catch (error) {
+        res.status(400).json({ message: "users could not be retrieved." });
+    }
 });
 
 router.get('/:id', validateUserId, async (req, res) => {
+    const { id } = req.params;
 
+    try {
+        const userId = await Users.findById(id);
+        if (userId.length) {
+            res.json(userId);
+        } else {
+            res.status(404).json({ message: "The user with the specified ID does not exist." })
+        }
+    } catch (error) {
+        res.status(400).json({ message: "No users found with that id" });
+    }
 });
 
 router.get('/:id/posts', validateUserId, async (req, res) => {
@@ -49,10 +71,10 @@ async function validateUserId(req, res, next) {
             req.user = user;
             next();
         } else {
-            res.status(404).json({ message: "User not found; invalid id" });
+            res.status(400).json({ message: "invalid user id." });
         }
     } catch (error) {
-        res.status(500).json({ message: "Failed to process request" });
+        res.status(400).json({ message: "missing required name field" });
     }
 };
 
